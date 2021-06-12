@@ -1,3 +1,4 @@
+import { StartComponent } from './shared/star.component';
 import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 
@@ -10,7 +11,8 @@ import { ConvertToSpace } from './shared/convert-to-space.pipe';
     declarations: [
         AppComponent,
         ProductListComponent,
-        ConvertToSpace
+        ConvertToSpace,
+        StartComponent
     ],
     imports: [
         BrowserModule,

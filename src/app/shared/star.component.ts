@@ -5,17 +5,17 @@ import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from
     templateUrl: './star.component.html',
     styleUrls: ['./star.component.css']
 })
-export class StartComponent implements OnChanges{
+export class StartComponent implements OnChanges {
 
     @Input() rating: number = 4.5;
     cropWidth: number = 75;
     @Output() ratingClicked: EventEmitter<string> = new EventEmitter<string>();
 
     ngOnChanges(changes: SimpleChanges): void {
-        this.cropWidth = this.rating * 75/5;
+        this.cropWidth = this.rating * 75 / 5;
     }
 
-    onClick():void {
+    onClick(): void {
         this.ratingClicked.emit(`The rating ${this.rating} was clicking`);
     }
 }

@@ -8,12 +8,12 @@
             <div class="col-md-4">
                 <label for=""></label>
                 <input class="w-100" type="text" name="" id=""
-                    [(ngModel)]="setListFilter">
+                    [(ngModel)]="listFilter">
             </div>
         </div>
         <div class="row">
             <div class="col-md-6">
-                <h4>Filtered by: {{getListFilter}} </h4>
+                <h4>Filtered by: {{listFilter}} </h4>
             </div>
         </div>
         <div class="table-responsive">
@@ -49,7 +49,7 @@
                         <td>{{product.releaseDate}}</td>
                         <td>{{product.price | currency:'USD':'symbol':'1.2-2' }}</td>
                         <td>
-                            <pm-star 
+                            <pm-star
                                 [rating]="product.starRating"
                                 (ratingClicked)="onRatingClick($event)">
                             </pm-star>

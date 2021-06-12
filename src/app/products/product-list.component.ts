@@ -1,6 +1,7 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, OnDestroy, OnInit} from "@angular/core";
 import {IProduct} from "./product";
 import { ProductService } from "./product.service";
+import {Subscription} from "rxjs";
 
 @Component({
     selector: 'pm-products',
@@ -8,7 +9,7 @@ import { ProductService } from "./product.service";
     styleUrls: ['./product-list.component.css'],
     providers: [ProductService]
 })
-export class ProductListComponent implements OnInit{
+export class ProductListComponent implements OnInit, OnDestroy{
 
     constructor(private productService: ProductService) {}
 
@@ -16,19 +17,23 @@ export class ProductListComponent implements OnInit{
     imageWidth: number = 50;
     imageMargin: number = 2;
     showImage: boolean = false;
+    errorMessage: string = '';
+
+    subscription!: Subscription;
+
     private _listFilter: string = '';
+
+    get listFilter(): string {
+        return this._listFilter;
+    }
+
+    set listFilter(value: string) {
+        this._listFilter = value;
+        this.filterProducts =  this.performFilter(value);
+    }
 
     filterProducts: IProduct[] = [];
     products: IProduct[] = [];
-
-    public get getListFilter() : string {
-        return this._listFilter;
-    }
-    
-    public set setListFilter(listFilter : string) {
-        this._listFilter = listFilter;
-        this.filterProducts = this.performFilter(listFilter);
-    }
 
     performFilter(value: string): IProduct[] {
         value = value.toLowerCase();
@@ -36,17 +41,26 @@ export class ProductListComponent implements OnInit{
             return product.productName.toLowerCase().includes(value);
         });
     }
-    
+
     onRatingClick(event: string):void {
         this.pageTitle = "Product List " + event;
     }
 
     ngOnInit(): void {
-       this.products = this.productService.getProducts();
-       this.filterProducts = this.products;
+       this.subscription = this.productService.getProducts().subscribe({
+           next: products => {
+               this.products = products;
+               this.filterProducts = products;
+           },
+           error: err => this.errorMessage = err
+       });
     }
 
     toggleImage():void {
         this.showImage = !this.showImage;
+    }
+
+    ngOnDestroy(): void {
+        this.subscription.unsubscribe();
     }
 }

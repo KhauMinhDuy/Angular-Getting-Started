@@ -5,5 +5,6 @@
     ".idea": true,
     ".vscode": true,
     "node_modules": true
-  }
+  },
+  "editor.fontFamily": "Consolas, 'Courier New',monospace"
 }

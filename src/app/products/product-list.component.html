@@ -7,8 +7,11 @@
             <div class="col-md-2">Filter by:</div>
             <div class="col-md-4">
                 <label for=""></label>
-                <input class="w-100" type="text" name="" id=""
-                    [(ngModel)]="listFilter">
+                <input class="w-100"
+                       type="text"
+                       name=""
+                       id=""
+                       [(ngModel)]="listFilter">
             </div>
         </div>
         <div class="row">
@@ -17,13 +20,14 @@
             </div>
         </div>
         <div class="table-responsive">
-            <table class="table" *ngIf="products.length">
+            <table class="table"
+                   *ngIf="products.length">
                 <caption></caption>
                 <thead>
                     <tr>
                         <th scope="col">
                             <button class="btn btn-primary"
-                                (click)="toggleImage()">
+                                    (click)="toggleImage()">
                                 {{showImage ? "Hide" : "Show"}} Image
                             </button>
                         </th>
@@ -35,23 +39,27 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="" *ngFor="let product of filterProducts">
+                    <tr class=""
+                        *ngFor="let product of filterProducts">
                         <td>
-                            <img
-                                *ngIf="showImage"
-                                [src]='product.imageUrl'
-                                [title]="product.productName"
-                                [style.width.px]="imageWidth"
-                                [style.margin.px]="imageMargin" alt="">
+                            <img *ngIf="showImage"
+                                 [src]='product.imageUrl'
+                                 [title]="product.productName"
+                                 [style.width.px]="imageWidth"
+                                 [style.margin.px]="imageMargin"
+                                 alt="">
                         </td>
-                        <td>{{product.productName | lowercase | convertToSpaces:'-'}}</td>
+                        <td>
+                            <a [routerLink]="['/products', product.productId]">
+                                {{product.productName | lowercase | convertToSpaces:'-'}}
+                            </a>
+                        </td>
                         <td>{{product.productCode}}</td>
                         <td>{{product.releaseDate}}</td>
                         <td>{{product.price | currency:'USD':'symbol':'1.2-2' }}</td>
                         <td>
-                            <pm-star
-                                [rating]="product.starRating"
-                                (ratingClicked)="onRatingClick($event)">
+                            <pm-star [rating]="product.starRating"
+                                     (ratingClicked)="onRatingClick($event)">
                             </pm-star>
                         </td>
                     </tr>

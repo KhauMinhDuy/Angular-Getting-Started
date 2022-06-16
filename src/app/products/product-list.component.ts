@@ -1,11 +1,6 @@
-import {
-  Component,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { IProduct } from './product';
+import { ProductService } from './product.service';
 
 @Component({
   selector: 'pm-product',
@@ -18,31 +13,11 @@ export class ProductListComponent implements OnInit, OnChanges, OnDestroy {
   imageMargin: number = 2;
   showImage: boolean = false;
   listProductFilter: IProduct[] = [];
+  products: IProduct[] = [];
 
   private _listFilter: string = '';
 
-  products: IProduct[] = [
-    {
-      productId: 2,
-      productName: 'Garden Cart',
-      productCode: 'GDN-0023',
-      releaseDate: 'March 18, 2021',
-      description: '15 gallon capacity rolling garden cart',
-      price: 32.99,
-      starRating: 4.2,
-      imageUrl: 'assets/images/garden_cart.png',
-    },
-    {
-      productId: 5,
-      productName: 'Hammer',
-      productCode: 'TBX-0048',
-      releaseDate: 'May 21, 2021',
-      description: 'Curved claw steel hammer',
-      price: 8.9,
-      starRating: 4.8,
-      imageUrl: 'assets/images/hammer.png',
-    },
-  ];
+  constructor(private productService: ProductService) {}
 
   toggleImage(): void {
     this.showImage = !this.showImage;
@@ -55,11 +30,16 @@ export class ProductListComponent implements OnInit, OnChanges, OnDestroy {
     );
   }
 
-  ngOnInit(): void {
-    this.listFilter = 'card';
+  onRatingClicked(event: string): void {
+    this.pageTitle = 'Product List ' + event;
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnInit(): void {
+    this.products = this.productService.getProducts();
+    this.listProductFilter = this.products;
+  }
+
+  ngOnChanges(): void {
     console.log('onChanges');
   }
 

@@ -1,4 +1,5 @@
 import { Component, OnChanges, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { IProduct } from './product';
 import { ProductService } from './product.service';
 
@@ -14,6 +15,8 @@ export class ProductListComponent implements OnInit, OnChanges, OnDestroy {
   showImage: boolean = false;
   listProductFilter: IProduct[] = [];
   products: IProduct[] = [];
+  errorMessage: string = '';
+  sub!: Subscription;
 
   private _listFilter: string = '';
 
@@ -35,8 +38,13 @@ export class ProductListComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.products = this.productService.getProducts();
-    this.listProductFilter = this.products;
+    this.sub = this.productService.getProducts().subscribe({
+      next: (products) => {
+        this.products = products;
+        this.listProductFilter = this.products;
+      },
+      error: (err) => (this.errorMessage = err),
+    });
   }
 
   ngOnChanges(): void {
@@ -45,6 +53,7 @@ export class ProductListComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnDestroy(): void {
     console.log('OnDestroy');
+    this.sub.unsubscribe();
   }
 
   get listFilter(): string {

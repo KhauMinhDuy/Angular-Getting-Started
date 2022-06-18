@@ -1,66 +1,68 @@
-import {Component, OnDestroy, OnInit} from "@angular/core";
-import {IProduct} from "./product";
-import { ProductService } from "./product.service";
-import {Subscription} from "rxjs";
+import { Component, OnChanges, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { IProduct } from './product';
+import { ProductService } from './product.service';
 
 @Component({
-    selector: 'pm-products',
-    templateUrl: './product-list.component.html',
-    styleUrls: ['./product-list.component.css'],
-    providers: [ProductService]
+  selector: 'pm-product',
+  templateUrl: './product-list.component.html',
+  styleUrls: ['./product-list.component.css'],
 })
-export class ProductListComponent implements OnInit, OnDestroy{
+export class ProductListComponent implements OnInit, OnChanges, OnDestroy {
+  pageTitle: string = 'Product List';
+  imageWidth: number = 50;
+  imageMargin: number = 2;
+  showImage: boolean = false;
+  listProductFilter: IProduct[] = [];
+  products: IProduct[] = [];
+  errorMessage: string = '';
+  sub!: Subscription;
 
-    constructor(private productService: ProductService) {}
+  private _listFilter: string = '';
 
-    pageTitle: string = 'Product List';
-    imageWidth: number = 50;
-    imageMargin: number = 2;
-    showImage: boolean = false;
-    errorMessage: string = '';
+  constructor(private productService: ProductService) {}
 
-    subscription!: Subscription;
+  toggleImage(): void {
+    this.showImage = !this.showImage;
+  }
 
-    private _listFilter: string = '';
+  performFilter(filterBy: string): IProduct[] {
+    filterBy = filterBy.toLocaleLowerCase();
+    return this.products.filter((product: IProduct) =>
+      product.productName.toLocaleLowerCase().includes(filterBy)
+    );
+  }
 
-    get listFilter(): string {
-        return this._listFilter;
-    }
+  onRatingClicked(event: string): void {
+    this.pageTitle = 'Product List ' + event;
+  }
 
-    set listFilter(value: string) {
-        this._listFilter = value;
-        this.filterProducts =  this.performFilter(value);
-    }
+  ngOnInit(): void {
+    this.sub = this.productService.getProducts().subscribe({
+      next: (products) => {
+        this.products = products;
+        this.listProductFilter = this.products;
+      },
+      error: (err) => (this.errorMessage = err),
+    });
+  }
 
-    filterProducts: IProduct[] = [];
-    products: IProduct[] = [];
+  ngOnChanges(): void {
+    console.log('onChanges');
+  }
 
-    performFilter(value: string): IProduct[] {
-        value = value.toLowerCase();
-        return this.products.filter((product: IProduct) => {
-            return product.productName.toLowerCase().includes(value);
-        });
-    }
+  ngOnDestroy(): void {
+    console.log('OnDestroy');
+    this.sub.unsubscribe();
+  }
 
-    onRatingClick(event: string):void {
-        this.pageTitle = "Product List " + event;
-    }
+  get listFilter(): string {
+    return this._listFilter;
+  }
 
-    ngOnInit(): void {
-       this.subscription = this.productService.getProducts().subscribe({
-           next: products => {
-               this.products = products;
-               this.filterProducts = products;
-           },
-           error: err => this.errorMessage = err
-       });
-    }
-
-    toggleImage():void {
-        this.showImage = !this.showImage;
-    }
-
-    ngOnDestroy(): void {
-        this.subscription.unsubscribe();
-    }
+  set listFilter(v: string) {
+    this._listFilter = v;
+    console.log('In Setter: ' + v);
+    this.listProductFilter = this.performFilter(v);
+  }
 }
